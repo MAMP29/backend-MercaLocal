@@ -1,2 +1,5 @@
 /venv/
 /.idea/
+dashboard/__pycache__/
+localstore/__pycache__/
+dashboard/migrations/__pycache__/
