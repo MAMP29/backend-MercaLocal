@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated # Permite validar si un usuario esta autenticado y a que rutas puede acceder
 from rest_framework.authentication import TokenAuthentication
-from users.Permission import EsVendedor
+from users.permission import EsVendedor
 
 # Create your views here.
 # Clase encargada de la respuesta al cliente en base al servición de autenticación
@@ -87,17 +87,19 @@ def request_vendedor(request):
 '''
 
 # Para convertir un cliente en un vendedor
-@api_view(['PATCH'])
+@api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def convertir_vendedor(request):
 
     cliente = get_object_or_404(Cliente, email=request.data['email'])
 
-    if cliente.is_vendedor:
+    if cliente.es_vendedor:
         return Response({"error":"El usuario ya es un vendedor"}, status=status.HTTP_400_BAD_REQUEST)
 
     serializer = ConvertirVendedorSerializer(cliente, data=request.data)
+
+    print(request.data)
 
     if serializer.is_valid():
         serializer.save()
@@ -113,4 +115,4 @@ def convertir_vendedor(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([EsVendedor])
 def es_vendedor(request):
-    return Response({"es_vendedor": request.user.is_vendedor}, status=status.HTTP_200_OK)
+    return Response({"es_vendedor": request.user.es_vendedor}, status=status.HTTP_200_OK)

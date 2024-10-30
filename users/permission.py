@@ -18,4 +18,4 @@ class CanBuyProduct(permissions.BasePermission):
 class EsVendedor(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        return bool(request.user and request.user.is_authenticated and request.user.is_vendedor)
+        return bool(request.user and request.user.is_authenticated and request.user.es_vendedor)

@@ -48,7 +48,7 @@ class VendedorSerializer(serializers.ModelSerializer):
 
 # Clase para convertir un cliente en un vendedor
 class ConvertirVendedorSerializer(serializers.ModelSerializer):
-    nombre_tienda = serializers.CharField(source='cliente.nombre_tienda')
+    nombre_tienda = serializers.CharField()
 
     class Meta:
         model = Cliente
@@ -63,5 +63,6 @@ class ConvertirVendedorSerializer(serializers.ModelSerializer):
     # Actualiza el cliente con el nuevo valor de nombre de la tienda
     def update(self, instance, validated_data):
         instance.nombre_tienda = validated_data['nombre_tienda']
+        instance.es_vendedor = True
         instance.save()
         return instance
