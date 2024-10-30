@@ -20,31 +20,6 @@ class ClienteSerializer(serializers.ModelSerializer):
         cliente.save()
         return cliente
 
-    '''def create(self, validated_data):
-        cliente = Cliente(
-            username=validated_data['username'],
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_name'],
-            email=validated_data['email'],
-            telefono=validated_data['telefono'],
-            ciudad=validated_data['ciudad'],
-        )
-        # Hashea la contraseña antes de guardarla
-        cliente.set_password(validated_data['password'])
-        cliente.save()
-        return cliente'''
-
-'''
-# Serielizador para el venedor, solo tiene que guardar/solicitar los atributos relacionados a un cliente
-class VendedorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Cliente
-        fields = ['is_vendedor', 'nombre_tienda']
-        extra_kwargs = {
-            'is_vendedor': {'write_only':True},
-            'nombre_tienda': {'write_only':True}
-        }
-'''
 
 # Clase para convertir un cliente en un vendedor
 class ConvertirVendedorSerializer(serializers.ModelSerializer):

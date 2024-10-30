@@ -13,7 +13,7 @@ from rest_framework.authentication import TokenAuthentication
 from users.permission import EsVendedor
 
 # Create your views here.
-# Clase encargada de la respuesta al cliente en base al servición de autenticación
+# Clase encargada del api rest de la autenticación para los clientes
 
 
 # Para logear el usuario
@@ -68,23 +68,7 @@ def profile(request):
 
     return Response(serializer.data, status=status.HTTP_200_OK)
 
-'''
-# Para solicitar permisos de vendedor
-@api_view(['PATCH'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def request_vendedor(request):
-    
-    cliente = get_object_or_404(Cliente, username=request.user.username)
-    serializer = VendedorSerializer(data=request.data)
-    
-    if serializer.is_valid():
-        serializer.save(cliente=cliente, es_vendedor=True, nombre_tienda=request.data['nombre_tienda'])
-        cliente.user_permissions.add('can_sell_product')
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-'''
+
 
 # Para convertir un cliente en un vendedor
 @api_view(['POST'])

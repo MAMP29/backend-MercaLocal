@@ -1,5 +1,3 @@
-from pickle import FALSE
-
 from django.contrib.auth.models import AbstractUser, Group, Permission, PermissionsMixin
 from django.core.validators import RegexValidator
 from django.db import models
@@ -57,10 +55,7 @@ class Cliente(AbstractUser):
         verbose_name = 'Cliente'
         verbose_name_plural = 'Clientes'
         ordering = ['id']
-        #permissions = (
-        #    ('can_buy_product', 'Can buy product'),
-        #    ('can_sell_product', 'Can sell product'), # Tiene que ser un vendedor
-        #)
+
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.first_name = self.first_name.upper()
@@ -69,18 +64,3 @@ class Cliente(AbstractUser):
         super(Cliente, self).save()
 
 
-'''class Vendedor(models.Model):
-    # Quite el id, ya viene por defecto en los modelos de DJANGO
-    nombre_tienda = models.CharField(
-        max_length=100,
-        verbose_name='Nombre de la tienda',
-        unique=True
-    )
-
-    descripcion = models.TextField(
-        max_length=500,
-        default='Descripción de mi tienda'
-    )'''
-
-
-    #cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
