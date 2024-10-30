@@ -14,7 +14,10 @@ class ClienteSerializer(serializers.ModelSerializer):
 
     # Creación del cliente aquí mismo para evitar crearlo por fuera
     def create(self, validated_data):
+        password = validated_data.pop('password')
         cliente = Cliente.objects.create_user(**validated_data)
+        cliente.set_password(password)
+        cliente.save()
         return cliente
 
     '''def create(self, validated_data):

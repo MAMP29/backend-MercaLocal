@@ -69,7 +69,7 @@ class Cliente(AbstractUser):
         super(Cliente, self).save()
 
 
-class Vendedor(models.Model):
+'''class Vendedor(models.Model):
     # Quite el id, ya viene por defecto en los modelos de DJANGO
     nombre_tienda = models.CharField(
         max_length=100,
@@ -77,7 +77,7 @@ class Vendedor(models.Model):
         unique=True
     )
 
-    '''descripcion = models.TextField(
+    descripcion = models.TextField(
         max_length=500,
         default='Descripción de mi tienda'
     )'''
