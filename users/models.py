@@ -11,6 +11,21 @@ class Cliente(AbstractUser):
         unique=True,
         verbose_name='Correo electrónico'
     )
+
+    first_name = models.CharField(
+        max_length=100,
+        blank=False,
+        null=False,
+        verbose_name='Nombre'
+    )
+
+    last_name = models.CharField(
+        max_length=100,
+        blank=False,
+        null=False,
+        verbose_name='Apellido'
+    )
+
     telefono = models.PositiveBigIntegerField(
         unique=False, blank=False, null=False,
         validators=[
