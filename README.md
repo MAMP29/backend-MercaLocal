@@ -12,15 +12,15 @@ Es recomendable crear un entorno virtual para gestionar las dependencias del pro
 - **En Linux/macOS:**
 
    ```bash
-   python3 -m venv scp-env
-   source scp-env/bin/activate
+   python3 -m venv nombre-del-entorno
+   source nombre-del-entorno/bin/activate
    ```
 
 - **En Windows:**
 
    ```powershell
-   python -m venv scp-env
-   scp-env\Scripts\activate
+   python -m venv nombre-del-entorno
+   nombre-del-entorno\Scripts\activate
    ```
 
 ### 2. Instalar las dependencias del proyecto
@@ -48,9 +48,7 @@ Para iniciar el servidor en el entorno local, usa el siguiente comando:
 El servidor estará disponible en `http://127.0.0.1:8000/` de forma predeterminada.
 
 ---
-El formato que has usado es claro, pero estructurarlo con subtítulos y formato JSON más limpio ayudará a la legibilidad. Aquí tienes una versión revisada:
 
----
 
 ## Datos existentes
 
