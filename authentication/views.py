@@ -100,3 +100,15 @@ def convertir_vendedor(request):
 @permission_classes([EsVendedor])
 def es_vendedor(request):
     return Response({"es_vendedor": request.user.es_vendedor}, status=status.HTTP_200_OK)
+
+# Para cerrar sesion de un usuario
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def logout(request):
+    # Eliminar el token del usuario
+    request.user.auth_token.delete()
+    return Response(
+        {"detail": "Sesión cerrada exitosamente"},
+        status=status.HTTP_200_OK
+    )
