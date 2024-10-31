@@ -1,9 +1,3 @@
 /venv/
 /.idea/
-dashboard/__pycache__/
-localstore/__pycache__/
-dashboard/migrations/__pycache__/
-users/__pycache__/
-users/migrations/__pycache__/
-authentication/__pycache__/
-authentication/migrations/__pycache__/
+*.pyc
