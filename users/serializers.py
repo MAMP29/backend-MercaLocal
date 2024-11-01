@@ -9,7 +9,7 @@ class ClienteSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'first_name', 'last_name','email', 'password', 'telefono', 'ciudad']
         extra_kwargs = {
             'password': {'write_only':True},  # Hace que la contraseña no se muestre en la respuesta
-            'email': {'required': True} # Hace que el email sea obligatorio
+            'email': {'required': True}, # Hace que el email sea obligatorio
         }
 
     # Creación del cliente aquí mismo para evitar crearlo por fuera
