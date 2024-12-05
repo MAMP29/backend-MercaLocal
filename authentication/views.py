@@ -29,7 +29,7 @@ def login(request):
     if not cliente.check_password(request.data['password']):
         return Response({"error":"Invalid password"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Creamos un token
+    # Creamos un token o obtenemos uno ya existente del cliente
     token, created = Token.objects.get_or_create(user=cliente)
     serializer = ClienteSerializer(instance=cliente) # Usuario convertido en JSON
 
