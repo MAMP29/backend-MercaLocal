@@ -1,3 +1,5 @@
 /venv/
 /.idea/
 *.pyc
+authentication/migrations/__pycache__/
+authentication/__pycache__/

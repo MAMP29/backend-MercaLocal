@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'authentication',
     'dashboard',
     'users',
-     'corsheaders',
+    'products',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
