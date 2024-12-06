@@ -6,14 +6,14 @@ from .models import Producto, Categoria
 class ProductoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Producto
-        fields = ['id', 'nombre', 'precio', 'stock', 'descripcion', 'imagen',  'categoria']
+        fields = ['id', 'nombre', 'precio', 'stock', 'descripcion', 'imagen',  'vendedor' ,'categoria']
         extra_kwargs = {
             'nombre': {'required': True}, # Hace que el nombre sea obligatorio
             'precio': {'required': True}, # Hace que el precio sea obligatorio
             'stock': {'required': True}, # Hace que el stock sea obligatorio
             'descripcion': {'required': True}, # Hace que la descripción sea obligatorio
             'imagen': {'required': True}, # Hace que la imagen sea obligatorio
-            'cliente': {'required': True}, # Hace que el cliente sea obligatorio
+            'vendedor': {'required': True}, # Hace que el cliente sea obligatorio
             'categoria': {'required': True}, # Hace que la categoria sea obligatorio
         }
 

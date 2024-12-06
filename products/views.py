@@ -29,6 +29,7 @@ def create_producto(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Función para listar todos los productos del usuario que es vendedor
+# Revisar si se puede eliminar el campo del vendedor al devolver la lista de productos, pues es redundante
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([EsVendedor])
@@ -42,7 +43,7 @@ def list_productos(request):
 @permission_classes([EsVendedor])
 def retrieve_producto(request, producto_id):
     try:
-        producto = Producto.objects.get(id=producto_id, cliente=request.user)
+        producto = Producto.objects.get(id=producto_id, vendedor=request.user)
     except Producto.DoesNotExist:
         return Response({"error": "Producto no encontrado o no pertenece al usuario"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -54,7 +55,7 @@ def retrieve_producto(request, producto_id):
 @permission_classes([EsVendedor])
 def update_producto(request, producto_id):
     try:
-        producto = Producto.objects.get(id=producto_id, cliente=request.user)
+        producto = Producto.objects.get(id=producto_id, vendedor=request.user)
     except Producto.DoesNotExist:
         return Response({"error": "Producto no encontrado o no pertenece al usuario"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -74,7 +75,7 @@ def update_producto(request, producto_id):
 @permission_classes([EsVendedor])
 def delete_producto(request, producto_id):
     try:
-        producto = Producto.objects.get(id=producto_id, cliente=request.user)
+        producto = Producto.objects.get(id=producto_id, vendedor=request.user)
     except Producto.DoesNotExist:
         return Response({"error": "Producto no encontrado o no pertenece al usuario"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -91,7 +92,7 @@ def list_productos_vendedor(request, vendedor_id):
     except Cliente.DoesNotExist:
         return Response({"error": "Vendedor no encontrado"}, status=status.HTTP_404_NOT_FOUND)
 
-    productos = Producto.objects.filter(cliente=vendedor)
+    productos = Producto.objects.filter(vendedor=vendedor)
     serializer = ProductoSerializer(productos, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -103,7 +104,7 @@ def retrieve_producto_vendedor(request, vendedor_id, producto_id):
         return Response({"error": "Vendedor no encontrado"}, status=status.HTTP_404_NOT_FOUND)
 
     try:
-        producto = Producto.objects.get(id=producto_id, cliente=vendedor)
+        producto = Producto.objects.get(id=producto_id, vendedor=vendedor)
     except Producto.DoesNotExist:
         return Response({"error": "Producto no encontrado para este vendedor"}, status=status.HTTP_404_NOT_FOUND)
 

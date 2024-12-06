@@ -10,7 +10,7 @@ class Producto(models.Model):
     descripcion = models.TextField(blank=False, null=False, verbose_name='Descripción')
     fecha_publication = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de publicación')
     imagen = models.ImageField(upload_to='imagenes/productos/', blank=False, null=False, verbose_name='Imagen')
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, verbose_name='Cliente')
+    vendedor = models.ForeignKey(Cliente, on_delete=models.CASCADE, verbose_name='Vendedor')
     categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE, verbose_name='Categoria')
 
     class Meta:

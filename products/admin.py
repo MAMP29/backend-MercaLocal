@@ -3,9 +3,9 @@ from .models import Producto, Categoria
 
 # Registro del modelo Producto
 class ProductoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'nombre', 'precio', 'stock', 'fecha_publication', 'categoria', 'cliente')  # Qué campos mostrar en el listado
+    list_display = ('id', 'nombre', 'precio', 'stock', 'fecha_publication', 'categoria', 'vendedor')  # Qué campos mostrar en el listado
     search_fields = ('nombre', 'categoria__nombre')  # Campos por los que puedes buscar
-    list_filter = ('categoria', 'cliente')  # Filtros para la barra lateral
+    list_filter = ('categoria', 'vendedor')  # Filtros para la barra lateral
     list_per_page = 20  # Cuántos productos mostrar por página en el admin
 
 # Registro del modelo Categoria
