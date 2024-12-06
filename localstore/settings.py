@@ -145,3 +145,6 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 AUTH_USER_MODEL = 'users.Cliente'
+
+# Configuración de la sesión de carrito
+CART_SESSION_KEY = 'cart'

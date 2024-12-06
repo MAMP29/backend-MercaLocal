@@ -21,7 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('authentication.urls')),
     path('producto/', include('products.urls')),
-
+    path('carrito/', include('cart.urls')),
 
     #path('accounts/', include('allauth.urls')), # Cargando las urls de allauth
     #path('accounts/profile/', include('dashboard.urls')), # Empleamos un perfil básico para que lo muestre al iniciar sesión
