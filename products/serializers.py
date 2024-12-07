@@ -1,9 +1,21 @@
 from django.db import transaction
 from rest_framework import serializers
-from .models import Producto, Categoria
+from .models import Producto, Categoria, Cliente
 
 # Clase para serializar el producto, basado en el modelo de django
+class CategoriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Categoria
+        fields = '__all__'
+
+class ClienteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cliente
+        fields = '__all__'
+
 class ProductoSerializer(serializers.ModelSerializer):
+    vendedor = ClienteSerializer()
+    categoria = CategoriaSerializer()
     class Meta:
         model = Producto
         fields = ['id', 'nombre', 'precio', 'stock', 'descripcion', 'imagen',  'vendedor' ,'categoria']

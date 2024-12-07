@@ -34,7 +34,7 @@ def create_producto(request):
 @authentication_classes([TokenAuthentication])
 #@permission_classes([EsVendedor])
 def list_productos(request):
-    productos = Producto.objects.all()
+    productos = Producto.objects.select_related('categoria').all()
     serializer = ProductoSerializer(productos, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
