@@ -32,9 +32,9 @@ def create_producto(request):
 # Revisar si se puede eliminar el campo del vendedor al devolver la lista de productos, pues es redundante
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
-@permission_classes([EsVendedor])
+#@permission_classes([EsVendedor])
 def list_productos(request):
-    productos = Producto.objects.filter(cliente=request.user)
+    productos = Producto.objects.all()
     serializer = ProductoSerializer(productos, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 

@@ -150,3 +150,6 @@ AUTH_USER_MODEL = 'users.Cliente'
 
 # Configuración de la sesión de carrito
 CART_SESSION_KEY = 'cart'
+
+MEDIA_URL = '/media/'  # La URL pública donde se podrán acceder los archivos
+MEDIA_ROOT = BASE_DIR / 'media'  # La ruta donde se almacenarán los archivos en el servidor
