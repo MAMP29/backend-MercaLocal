@@ -11,7 +11,7 @@ class CategoriaSerializer(serializers.ModelSerializer):
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cliente
-        fields = '__all__'
+        fields = ['nombre_tienda']
 
 class ProductoSerializer(serializers.ModelSerializer):
     vendedor = ClienteSerializer()

@@ -68,6 +68,8 @@ CORS_ALLOWED_ORIGINS = [
     #"https://tu-dominio-2.com",
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+
 ROOT_URLCONF = 'localstore.urls'
 
 TEMPLATES = [

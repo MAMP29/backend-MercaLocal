@@ -7,11 +7,14 @@ class Pedido(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, verbose_name='Cliente')
     fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name='Fecha')
     total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Total')
+    direccion = models.CharField(max_length=250, verbose_name='Direccion', default='sin direccion')
     estado = models.CharField(
         max_length=20,
         choices=[('pendiente', 'Pendiente'), ('confirmado', 'Confirmado'), ('enviado', 'Enviado'), ('entregado', 'Entregado')],
         default='pendiente'
     )
+    
+
 
     class Meta:
         db_table = 'PEDIDO'

@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('fecha_creacion', models.DateTimeField(auto_now_add=True, verbose_name='Fecha')),
                 ('total', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Total')),
                 ('estado', models.CharField(choices=[('pendiente', 'Pendiente'), ('confirmado', 'Confirmado'), ('enviado', 'Enviado'), ('entregado', 'Entregado')], default='pendiente', max_length=20)),
-                ('cliente', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Cliente')),
+                ('cliente', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Cliente'))
             ],
             options={
                 'verbose_name': 'Pedido',
