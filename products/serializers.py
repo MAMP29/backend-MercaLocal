@@ -13,6 +13,7 @@ class ClienteSerializer(serializers.ModelSerializer):
         model = Cliente
         fields = ['nombre_tienda']
 
+# Serializador para obtener un producto
 class ProductoSerializer(serializers.ModelSerializer):
     vendedor = ClienteSerializer()
     categoria = CategoriaSerializer()
@@ -44,4 +45,30 @@ class ProductoSerializer(serializers.ModelSerializer):
         except Exception as e:
             raise serializers.ValidationError(f"Error al crear el producto: {str(e)}")
 
+        return producto
+
+# Serializador para crear un producto
+class ProductoCreateSerializer(serializers.ModelSerializer):
+    vendedor_nombre = serializers.SlugRelatedField(
+        queryset=Cliente.objects.all(),
+        slug_field='nombre_tienda',  # Campo que se utilizará para buscar al vendedor
+        source='vendedor',  # Mapea al campo 'vendedor' en el modelo
+        write_only=True
+    )
+    categoria_id = serializers.PrimaryKeyRelatedField(
+        queryset=Categoria.objects.all(),
+        source='categoria',  # Mapea al campo categoría
+        write_only=True
+    )
+
+    class Meta:
+        model = Producto
+        fields = ['nombre', 'precio', 'stock', 'descripcion', 'imagen', 'vendedor_nombre', 'categoria_id']
+
+    @transaction.atomic
+    def create(self, validated_data):
+        try:
+            producto = Producto.objects.create(**validated_data)
+        except Exception as e:
+            raise serializers.ValidationError(f"Error al crear el producto: {str(e)}")
         return producto
