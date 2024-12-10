@@ -4,9 +4,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authentication import TokenAuthentication
-from products.serializers import ProductoSerializer
-from .models import Producto
+from products.serializers import ProductoSerializer, ProductoCreateSerializer
+from .models import Producto, Categoria
 from users.models import Cliente
+from django_filters.rest_framework import DjangoFilterBackend
+from .product_filter import ProductFilter
+from rest_framework.generics import ListAPIView
 # Create your views here.
 
 
@@ -16,7 +19,7 @@ from users.models import Cliente
 @authentication_classes([TokenAuthentication])
 @permission_classes([EsVendedor])
 def create_producto(request):
-    serializer = ProductoSerializer(data=request.data, context={'request': request})
+    serializer = ProductoCreateSerializer(data=request.data, context={'request': request})
 
     if serializer.is_valid():
         serializer.save()
@@ -110,3 +113,24 @@ def retrieve_producto_vendedor(request, vendedor_id, producto_id):
 
     serializer = ProductoSerializer(producto)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# Buscar productos por categoria, en deshuso por el momento, para ello emplee el filtro de django-filters para hacer el filtrado en la API de abajo
+@api_view(['GET'])
+def listar_productos_por_categoria(request, categoria_id):
+    try:
+        categoria = Categoria.objects.get(id=categoria_id)
+    except Categoria.DoesNotExist:
+        return Response({"error": "Categoria no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+
+    productos = Producto.objects.filter(categoria=categoria)
+    serializer = ProductoSerializer(productos, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+# Buscar productos por filtro
+class ProductoListView(ListAPIView):
+    queryset = Producto.objects.all()
+    serializer_class = ProductoSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ProductFilter

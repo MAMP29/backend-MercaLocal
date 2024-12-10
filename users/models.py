@@ -60,7 +60,7 @@ class Cliente(AbstractUser):
     # ATRIBUTOS EXCLUSIVOS PARA EL APARTADO DE VENDEDOR, ESTAN VACIOS DESDE UN PRINCIPIO,
     # AL SER VENDEDOR SE DEBEN PONER VALORES
     es_vendedor = models.BooleanField(default=False)
-    nombre_tienda = models.CharField(max_length=100, blank=True, null=True, verbose_name='Nombre de la tienda')
+    nombre_tienda = models.CharField(max_length=100, blank=True, null=True, verbose_name='Nombre de la tienda') # poner unique=True para evitar duplicados
 
     USERNAME_FIELD = 'email' # Correo como autenticación principal en lugar de username
     REQUIRED_FIELDS = ['username', 'first_name','last_name','telefono', 'ciudad']
