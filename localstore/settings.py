@@ -157,3 +157,7 @@ CART_SESSION_KEY = 'cart'
 
 MEDIA_URL = '/media/'  # La URL pública donde se podrán acceder los archivos
 MEDIA_ROOT = BASE_DIR / 'media'  # La ruta donde se almacenarán los archivos en el servidor
+
+# Cloudfare turnstile captcha
+TURNSTILE_SITE_KEY = '1x00000000000000000000AA' # Clave de prueba, cambiar en producción
+TURNSTILE_SECRET_KEY = '1x0000000000000000000000000000000AA'

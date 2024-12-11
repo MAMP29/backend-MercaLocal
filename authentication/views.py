@@ -1,5 +1,4 @@
-from allauth.core.internal.httpkit import serialize_request
-from django.shortcuts import render
+import requests
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
@@ -11,6 +10,8 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated # Permite validar si un usuario esta autenticado y a que rutas puede acceder
 from rest_framework.authentication import TokenAuthentication
 from users.permission import EsVendedor
+from django.conf import settings
+from django.http import JsonResponse
 
 # Create your views here.
 # Clase encargada del api rest de la autenticación para los clientes
@@ -38,6 +39,12 @@ def login(request):
 # Para registrar el usuario
 @api_view(['POST'])
 def register(request):
+
+    # Verificamos si el usuario ha pasado la captcha
+    if not settings.DEBUG:
+        if not verify_turnstile(request.data['turnstile_token']):
+            return Response({"error": "Captcha incorrecto"}, status=status.HTTP_400_BAD_REQUEST)
+
     serializer = ClienteSerializer(data=request.data)
 
     print(request.data)
@@ -112,3 +119,29 @@ def logout(request):
         {"detail": "Sesión cerrada exitosamente"},
         status=status.HTTP_200_OK
     )
+
+
+def verify_turnstile(captcha_response):
+    """Verifica el CAPTCHA usando la clave secreta de Cloudflare."""
+    secret_key = settings.TURNSTILE_SECRET_KEY
+    verify_url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
+
+    data = {
+        'secret': secret_key,
+        'response': captcha_response
+    }
+
+    response = requests.post(verify_url, data=data)
+    result = response.json()
+
+    return result.get('success', False)
+
+def probar_turnstile(request):
+    """Probar el CAPTCHA usando la clave secreta de Cloudflare."""
+
+    captcha_response = 'RESPUESTA_DE_EJEMPLO'
+
+    if verify_turnstile(captcha_response):
+        return JsonResponse({'status': 'success', 'message': 'Captcha validado correctamente.'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Captcha no valido.'})

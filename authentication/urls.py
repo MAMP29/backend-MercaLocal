@@ -10,4 +10,7 @@ urlpatterns = [
     path('convertir-vendedor', views.convertir_vendedor, name='convertir-vendedor'),
     path('es-vendedor', views.es_vendedor, name='es-vendedor'),
     path('logout', views.logout, name='logout'), # Nueva URL para logout
+
+    # URL para probar el CAPTCHA de Cloudflare
+    path('probar-turnstile', views.probar_turnstile, name='probar-turnstile'),
 ]
