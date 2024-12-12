@@ -15,4 +15,6 @@ urlpatterns = [
     path('vendedor/<int:vendedor_id>/productos', views.list_productos_vendedor, name='listar-productos-vendedor'),
     path('vendedor/<int:vendedor_id>/producto/<int:producto_id>', views.retrieve_producto_vendedor, name='producto-vendedor'),
 
+    # Endpoint para listar productos del vendedor
+    path('mis-productos', views.list_mis_productos, name='mis-productos'),
 ]

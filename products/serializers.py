@@ -72,3 +72,9 @@ class ProductoCreateSerializer(serializers.ModelSerializer):
         except Exception as e:
             raise serializers.ValidationError(f"Error al crear el producto: {str(e)}")
         return producto
+
+class ProductoUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Producto
+        fields = ['nombre', 'precio', 'stock', 'descripcion', 'imagen']
+

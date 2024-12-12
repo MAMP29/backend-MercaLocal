@@ -11,8 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-
-from django.conf.global_settings import AUTH_USER_MODEL
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -161,3 +160,12 @@ MEDIA_ROOT = BASE_DIR / 'media'  # La ruta donde se almacenarán los archivos en
 # Cloudfare turnstile captcha
 TURNSTILE_SITE_KEY = '1x00000000000000000000AA' # Clave de prueba, cambiar en producción
 TURNSTILE_SECRET_KEY = '1x0000000000000000000000000000000AA'
+
+# Configuración de la autenticación
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+

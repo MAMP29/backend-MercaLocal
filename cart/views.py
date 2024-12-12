@@ -25,7 +25,7 @@ def listar_carrito(request):
 @api_view(['POST'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def agregar_producto(request, producto_id):
+def agregar_producto(request):
     producto_id = request.data.get('producto_id')
     cantidad = request.data.get('cantidad', 1)
     sobre_escribir = request.data.get("sobre_escribir", False)
@@ -72,7 +72,7 @@ def actualizar_carrito(request):
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def eliminar_producto(request, producto_id):
+def eliminar_producto(request):
     producto_id = request.data.get('producto_id')
 
     try:

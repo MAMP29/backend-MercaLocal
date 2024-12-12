@@ -1,4 +1,6 @@
 import requests
+from django.utils.encoding import force_str, force_bytes
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
@@ -12,6 +14,8 @@ from rest_framework.authentication import TokenAuthentication
 from users.permission import EsVendedor
 from django.conf import settings
 from django.http import JsonResponse
+from django.core.mail import send_mail
+from django.contrib.auth.tokens import default_token_generator
 
 # Create your views here.
 # Clase encargada del api rest de la autenticación para los clientes
@@ -52,12 +56,20 @@ def register(request):
 
     if serializer.is_valid():
         cliente = serializer.save()
+        cliente.is_active = False
+        cliente.save()
 
-        if cliente:
-            token = Token.objects.create(user=cliente)
-            return Response({'token': token.key, "user": serializer.data}, status=status.HTTP_201_CREATED)
+        uid = urlsafe_base64_encode(force_bytes(cliente.id))
+        token = default_token_generator.make_token(cliente)
+        activate_url = f"http://localhost:8000/validar-email/{uid}/{token}/"
 
-
+        send_mail(
+            subject='Activación de cuenta',
+            message=f'Por favor, activa tu cuenta haciendo clic en el siguiente enlace: {activate_url}',
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[cliente.email],
+        )
+        return Response({"detail": "Registro exitoso. Revisa tu correo para activar la cuenta."}, status=201)
     #print(request.data)
     print(serializer.errors)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -83,7 +95,8 @@ def profile(request):
 @permission_classes([IsAuthenticated])
 def convertir_vendedor(request):
 
-    cliente = get_object_or_404(Cliente, email=request.data['email'])
+    cliente = Cliente.objects.get(email=request.data['email'])
+
 
     if cliente.es_vendedor:
         return Response({"error":"El usuario ya es un vendedor"}, status=status.HTTP_400_BAD_REQUEST)
@@ -145,3 +158,19 @@ def probar_turnstile(request):
         return JsonResponse({'status': 'success', 'message': 'Captcha validado correctamente.'})
     else:
         return JsonResponse({'status': 'error', 'message': 'Captcha no valido.'})
+
+
+@api_view(['GET'])
+def validar_email(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = get_object_or_404(Cliente, pk=uid)
+        
+        if default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+            return Response({"message": "Cuenta activada exitosamente"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Token de activación inválido"}, status=status.HTTP_400_BAD_REQUEST)
+    except:
+        return Response({"error": "Token de activación inválido"}, status=status.HTTP_400_BAD_REQUEST)

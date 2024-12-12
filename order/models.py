@@ -13,8 +13,6 @@ class Pedido(models.Model):
         choices=[('pendiente', 'Pendiente'), ('confirmado', 'Confirmado'), ('enviado', 'Enviado'), ('entregado', 'Entregado')],
         default='pendiente'
     )
-    
-
 
     class Meta:
         db_table = 'PEDIDO'

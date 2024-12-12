@@ -1,10 +1,12 @@
 from rest_framework.decorators import api_view
+from urllib3 import request
+
 from users.permission import EsVendedor
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authentication import TokenAuthentication
-from products.serializers import ProductoSerializer, ProductoCreateSerializer
+from products.serializers import ProductoSerializer, ProductoCreateSerializer, ProductoUpdateSerializer
 from .models import Producto, Categoria
 from users.models import Cliente
 from django_filters.rest_framework import DjangoFilterBackend
@@ -31,8 +33,15 @@ def create_producto(request):
     print(serializer.errors)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([EsVendedor])
+def list_mis_productos(request):
+    productos = Producto.objects.filter(vendedor=request.user).all()
+    serializer = ProductoSerializer(productos, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
 # Función para listar todos los productos del usuario que es vendedor
-# Revisar si se puede eliminar el campo del vendedor al devolver la lista de productos, pues es redundante
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 #@permission_classes([EsVendedor])
@@ -62,7 +71,7 @@ def update_producto(request, producto_id):
     except Producto.DoesNotExist:
         return Response({"error": "Producto no encontrado o no pertenece al usuario"}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = ProductoSerializer(producto, data=request.data, context={'request': request}, partial=True)
+    serializer = ProductoUpdateSerializer(producto, data=request.data, context={'request': request}, partial=True)
     if serializer.is_valid():
         serializer.save()
         return Response({
