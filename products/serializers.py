@@ -1,6 +1,7 @@
 from django.db import transaction
 from rest_framework import serializers
 from .models import Producto, Categoria, Cliente
+from favs.models import Favorito
 
 # Clase para serializar el producto, basado en el modelo de django
 class CategoriaSerializer(serializers.ModelSerializer):
@@ -13,13 +14,20 @@ class ClienteSerializer(serializers.ModelSerializer):
         model = Cliente
         fields = ['nombre_tienda']
 
+class FavoritoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favorito
+        fields = ['id']
+
 # Serializador para obtener un producto
 class ProductoSerializer(serializers.ModelSerializer):
-    vendedor = ClienteSerializer()
-    categoria = CategoriaSerializer()
+    vendedor = ClienteSerializer(read_only=True)
+    categoria = CategoriaSerializer(read_only=True)
+    es_favorito = serializers.SerializerMethodField()
+    
     class Meta:
         model = Producto
-        fields = ['id', 'nombre', 'precio', 'stock', 'descripcion', 'imagen',  'vendedor' ,'categoria']
+        fields = ['id', 'nombre', 'precio', 'stock', 'descripcion', 'imagen', 'vendedor', 'categoria', 'es_favorito']
         extra_kwargs = {
             'nombre': {'required': True}, # Hace que el nombre sea obligatorio
             'precio': {'required': True}, # Hace que el precio sea obligatorio
@@ -29,6 +37,18 @@ class ProductoSerializer(serializers.ModelSerializer):
             'vendedor': {'required': True}, # Hace que el cliente sea obligatorio
             'categoria': {'required': True}, # Hace que la categoria sea obligatorio
         }
+    @transaction.atomic
+    def get_es_favorito(self, obj):
+        request = self.context['request']
+        #print('context ----- ', request)
+        if request and hasattr(request.user, 'id'):  # Verificamos que el usuario tenga ID
+            # Construimos la consulta de manera más explícita
+            favorito_existe = Favorito.objects.filter(
+                cliente_id=request.user.id,  # Accedemos al cliente a través de la relación con user
+                producto_id=obj.id
+            ).exists()
+            return favorito_existe
+        return False
 
     @transaction.atomic
     def create(self, validated_data):

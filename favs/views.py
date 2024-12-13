@@ -40,9 +40,11 @@ def listar_favoritos(request):
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def delete_favorito(request, pk):
+    print(f"Usuario: {request.user}, pk: {pk}")
     try:
         # Buscar el favorito solo si pertenece al usuario actual
-        favorito = Favorito.objects.get(pk=pk, cliente=request.user)
+        favorito = Favorito.objects.get(producto_id=pk, cliente_id=request.user.id)
+        print(f"Favorito: {favorito}")
     except Favorito.DoesNotExist:
         return Response({'detail': 'Favorito no encontrado o no pertenece al usuario.'}, status=status.HTTP_404_NOT_FOUND)
 
