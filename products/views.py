@@ -38,7 +38,7 @@ def create_producto(request):
 #@permission_classes([EsVendedor])
 def list_productos(request):
     productos = Producto.objects.select_related('categoria').all()
-    serializer = ProductoSerializer(productos, many=True)
+    serializer = ProductoSerializer(productos, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])

@@ -31,11 +31,8 @@ class FavoritoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Favorito
-        fields = ['id', 'producto_id', 'producto', 'fecha_creacion']
-        extra_kwargs = {
-            'producto_id': {'required': True}, # Hace que el cliente sea obligatorio
-            'producto': {'required': True}, # Hace que el producto sea obligatorio
-        }
+        fields = ['id', 'cliente_id', 'producto_id', 'fecha_creacion', 'producto']
+        
 
     def create(self, validated_data):
         cliente = self.context['request'].user
