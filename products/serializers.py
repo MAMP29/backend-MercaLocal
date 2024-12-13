@@ -40,6 +40,8 @@ class ProductoSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def get_es_favorito(self, obj):
         request = self.context['request']
+        if not request:
+            request = self.context.get('request')
         #print('context ----- ', request)
         if request and hasattr(request.user, 'id'):  # Verificamos que el usuario tenga ID
             # Construimos la consulta de manera más explícita

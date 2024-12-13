@@ -177,22 +177,29 @@ class ReporteVentasMes(APIView):
         )
 
         # Construir el formato solicitado
-        reporte = {}
+        reporte = {
+            "productos": [],
+            "resumen": {
+                "total_productos": 0,
+                "total_ganancias": 0
+            }
+        }
         total_productos = 0
         total_ganancias = 0
 
         for producto in productos_vendidos:
-            reporte[producto["nombre_producto"]] = {
-                "Cantidad": producto["cantidad_vendida"],
-                "Total": float(producto["total_ganancias"])
-            }
+            reporte["productos"].append({
+                "nombre_producto": producto["nombre_producto"],
+                "cantidad": producto["cantidad_vendida"],
+                "total": float(producto["total_ganancias"])
+            })
             total_productos += producto["cantidad_vendida"]
             total_ganancias += producto["total_ganancias"]
 
         # Agregar los totales al reporte
-        reporte["Resumen"] = {
-            "TotalProductos": total_productos,
-            "TotalGanancias": float(total_ganancias)
+        reporte["resumen"] = {
+            "total_productos": total_productos,
+            "total_ganancias": float(total_ganancias)
         }
 
         return Response(reporte)

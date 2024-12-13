@@ -143,3 +143,13 @@ class ProductoListView(ListAPIView):
     serializer_class = ProductoSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = ProductFilter
+
+    def get_serializer(self, *args, **kwargs):
+        kwargs['context'] = self.get_serializer_context()
+        return super().get_serializer(*args, **kwargs)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+    
