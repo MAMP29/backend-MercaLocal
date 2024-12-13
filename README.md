@@ -99,3 +99,14 @@ La base de datos incluye los siguientes registros preconfigurados para realizar 
 ## Notas adicionales
 
 - **Actualizar dependencias:** Si se añaden nuevas bibliotecas, ejecute `pip freeze > requirements.txt` para mantener el archivo `requirements.txt` actualizado.
+
+En caso de que al momento de utilizar el apartado de registro y se produzca un error con el correo electrónico, cree a nivel de la carpeta manage.py 
+un archivo llamado .env y añada la siguiente línea:
+
+```bash
+EMAIL_HOST_USER=usuario@gmail.com
+EMAIL_HOST_PASSWORD=contraseña
+```
+
+Para que el correo electrónico funcione correctamente, es necesario tener una cuenta de correo electrónico de Google, solo en entornos de desarrollo,
+no olvide añadir el archivo .env a la lista de ignorados en el archivo .gitignore en caso de que no lo haga.

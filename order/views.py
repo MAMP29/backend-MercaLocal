@@ -1,4 +1,6 @@
 from django.db import transaction
+from django.db.models import F, Sum
+from django.db.models.functions import TruncMonth
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
@@ -6,11 +8,17 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authentication import TokenAuthentication
+from django.utils.dateparse import parse_date
+from users.permission import EsVendedor
 from .serializers import DetallePedidoSerializer, PedidoSerializer
 from products.models import Producto
 from users.models import Cliente
 from cart.service import Carro
 from .models import Pedido, DetallePedido
+from rest_framework.views import APIView
+from django.utils import timezone
+from datetime import datetime, timedelta
+
 
 
 @api_view(['POST'])
@@ -74,3 +82,117 @@ def obtener_pedido(request):
     pedido = Pedido.objects.filter(cliente_id=request.user)
     serializer = PedidoSerializer(pedido, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+# Funcion para generar reporte de los pedidos más vendidos
+class ReporteProductosMasVendidos(APIView):
+
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [EsVendedor]
+
+    def get(self, request, *args, **kwargs):
+        vendedor = request.user
+
+        # Obtener productos vendidos filtrados por el vendedor
+        productos_vendidos = (
+            DetallePedido.objects.filter(producto__vendedor=vendedor, pedido__estado='pendiente') # Solo se consideran los pedidos pendientes, ya que no esta habilitado el envio de los mismos
+            .values(nombre_producto=F('producto__nombre'))
+            .annotate(total_vendido=Sum('cantidad'))
+            .order_by('-total_vendido')[:10]  # Los 10 más vendidos
+        )
+
+        return Response(productos_vendidos)
+
+# Número de productos y ganancias por 6 meses
+class ReporteVentasMensualesAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [EsVendedor]
+
+    def get(self, request, *args, **kwargs):
+        vendedor = request.user
+
+        fecha_hoy = timezone.now()
+        fecha_inicio = fecha_hoy - timedelta(days=180) # 180 días atrás
+
+        ventas_mensuales = (
+            DetallePedido.objects.filter(
+                producto__vendedor=vendedor,
+                pedido__estado='pendiente',  # Solo pedidos pendientes, ya que no esta habilitado el envio de los mismos
+                pedido__fecha_creacion__gte=fecha_inicio
+            )
+            .annotate(mes=TruncMonth('pedido__fecha_creacion'))
+            .values(mes=F('mes'))
+            .annotate(
+                total_productos=Sum('cantidad'),  # Número de productos vendidos
+                total_ganancias=Sum(F('cantidad') * F('precio'))  # Ganancias totales
+            )
+            .order_by('mes')  # Ordenar por mes
+        )
+
+        datos = [
+            {
+                "mes": venta["mes"].strftime("%Y-%m"),
+                "total_productos": venta["total_productos"],
+                "total_ganancias": float(venta["total_ganancias"]),
+            }
+            for venta in ventas_mensuales
+        ]
+
+        return Response(datos)
+
+# Número de ventas por un mes en especifico
+class ReporteVentasMes(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [EsVendedor]
+
+    def get(self, request, *args, **kwargs):
+        vendedor = request.user
+        mes_anio = request.query_params.get('mes', None)  # Obtener el mes desde los parámetros de consulta
+
+        if mes_anio is None:
+            mes_anio = timezone.now().strftime('%m')
+
+        try:
+            # Convertir `mes` a un objeto datetime
+            mes_inicio = datetime.strptime(mes_anio, '%Y-%m')
+
+            mes_inicio = timezone.make_aware(mes_inicio, timezone.get_current_timezone())
+
+            mes_fin = (mes_inicio.replace(day=28) + timedelta(days=4)).replace(day=1)  # Inicio del próximo mes
+        except ValueError:
+            return Response({"error": "El formato del mes debe ser YYYY-MM."}, status=400)
+
+        # Consultar los datos para el mes específico
+        productos_vendidos = (
+            DetallePedido.objects.filter(
+                producto__vendedor=vendedor,
+                pedido__estado='pendiente',  # Solo pedidos pendientes
+                pedido__fecha_creacion__gte=mes_inicio,
+                pedido__fecha_creacion__lt=mes_fin
+            )
+            .values(nombre_producto=F('producto__nombre'))
+            .annotate(
+                cantidad_vendida=Sum('cantidad'),  # Sumar las cantidades vendidas
+                total_ganancias=Sum(F('cantidad') * F('precio'))  # Calcular las ganancias por producto
+            )
+        )
+
+        # Construir el formato solicitado
+        reporte = {}
+        total_productos = 0
+        total_ganancias = 0
+
+        for producto in productos_vendidos:
+            reporte[producto["nombre_producto"]] = {
+                "Cantidad": producto["cantidad_vendida"],
+                "Total": float(producto["total_ganancias"])
+            }
+            total_productos += producto["cantidad_vendida"]
+            total_ganancias += producto["total_ganancias"]
+
+        # Agregar los totales al reporte
+        reporte["Resumen"] = {
+            "TotalProductos": total_productos,
+            "TotalGanancias": float(total_ganancias)
+        }
+
+        return Response(reporte)
