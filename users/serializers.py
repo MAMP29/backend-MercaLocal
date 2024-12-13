@@ -6,7 +6,7 @@ from .models import Cliente
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cliente
-        fields = ['id', 'username', 'first_name', 'last_name','email', 'password', 'telefono', 'ciudad']
+        fields = ['id', 'username', 'first_name', 'last_name','email', 'password', 'telefono', 'ciudad', 'es_vendedor', 'is_superuser']
         extra_kwargs = {
             'password': {'write_only':True},  # Hace que la contraseña no se muestre en la respuesta
             'email': {'required': True}, # Hace que el email sea obligatorio
