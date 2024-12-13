@@ -71,6 +71,7 @@ MIDDLEWARE = [
 #CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://mercalocal.netlify.app"
     #"https://tu-dominio-2.com",
 ]
 
